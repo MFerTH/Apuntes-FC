@@ -1,0 +1,92 @@
+%pi=4.0*tan(1.0);
+clear
+a=-7.5;
+b=7.5;
+
+n=10;
+dx=(b-a)/n;
+
+for i=1:n+1
+    x(i)=a+(i-1)*dx;
+end
+
+g=sech(x);
+g1=exp(-x.^2); %El putno después de la x es para que eleve cada elemento
+                % de la matriz al cuadrado
+
+figure
+plot(x,g,'-',x,g1,':r')
+legend('sech(x)','e^{-x^2}')
+
+%Métodos de aproximación: sus resultados son guardadps en espacios que van del 1 al 7
+
+%1-sumas inferiores
+suma=0;
+suma1=1;
+for i=1:n
+  suma=suma+g(i)*dx;
+  suma1=suma1+g1(i)*dx;
+end
+
+secante(1)=suma;
+exponencial(1)=suma1;
+
+%2 -sumas superiores
+suma=0;
+suma1=0;
+for i=2:n+1
+  suma=suma+g(i)*dx;
+  suma1=suma1+g1(i)*dx;
+end
+
+secante(2)=suma;
+exponencial(2)=suma1;
+
+%3 -trapecio
+suma=0;
+suma1=0;
+for i=1:n
+  suma=suma+(g(i)+g(i+1))*dx/2;
+  suma1=suma1+(g1(i)+g1(i+1))*dx/2;
+end
+
+secante(3)=suma;
+exponencial(3)=suma1;
+
+%4 -Simpson
+suma=0;
+suma1=0;
+for i=1:2:n-1
+  suma=suma+(g(i)+g(i+2)+4*g(i+1))*dx/3;
+  suma1=suma1+(g1(i)+g1(i+2)+4*g1(i+1))*dx/3;
+end
+secante(4)=suma;
+exponencial(4)=suma1;
+
+%5 -Simpson 3/8: es más exacto cuando el número de puntos es múltiplo de 3
+suma=0;
+suma1=0;
+for i=1:3:n-2
+  suma=suma+(g(i)+g(i+3)+3*(g(i+1)+g(i+2)))*3*dx/8;
+  suma1=suma1+(g1(i)+g1(i+3)+3*(g1(i+1)+g1(i+2)))*3*dx/8;
+end
+secante(5)=suma;
+exponencial(5)=suma1;
+%6 -Boole
+suma=0;
+suma1=0;
+for i=1:4:n-3
+  suma=suma+(7*(g(i)+g(i+4))*32*(g(i+1)+g(i+3))+12*g(i+2))*2*dx/45;
+  suma1=suma1+(7*(g1(i)+g1(i+4))*32*(g1(i+1)+g1(i+3))+12*g1(i+2))*2*dx/45;
+end
+secante(6)=suma;
+exponencial(6)=suma1;
+
+%7 -solución exacta
+ExacSech=3.13938;
+ExacExp=1.77245;
+secante(7)=ExacSech;
+exponencial(7)=ExacExp;
+
+disp(secante') %la comilla ' es para que muestre la transpuesta
+disp(exponencial')
